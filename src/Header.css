@@ -1,0 +1,43 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #005DAA;
+    color: white;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-links a:hover {
+    color: orange;
+}
+
+/* ✅ Responsive style for screens < 587px */
+@media (max-width: 587px) {
+    .header {
+        padding: 10px 20px;
+    }
+
+    .header h1 {
+        font-size: 1.2em;
+    }
+
+    .nav-links a {
+        font-size: 0.9em;
+    }
+}

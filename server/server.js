@@ -45,7 +45,7 @@ app.post('/submit', async (req, res) => {
     }
 
     // Check similarity
-    const threshold = 0.65;
+    const threshold = 0.90;
     const matchResult = stringSimilarity.findBestMatch(newFact.question, existingQuestions);
 
     if (matchResult.bestMatch.rating > threshold) {

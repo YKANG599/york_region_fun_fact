@@ -125,24 +125,6 @@ function SubmitPage() {
                 <p><strong>Location:</strong> King</p>
                 <p><strong>Category:</strong> Physiographic</p>
             </div>
-
-            <div className="fact-list" style={{ marginTop: '40px' }}>
-                <h3>📚 Submitted Facts</h3>
-                {facts.length === 0 ? (
-                    <p>No facts submitted yet.</p>
-                ) : (
-                    <ul>
-                        {facts.map((fact, index) => (
-                            <li key={index} style={{ marginBottom: '15px' }}>
-                                <strong>Q:</strong> {fact.question} <br />
-                                <strong>A:</strong> {fact.answer} <br />
-                                <strong>Location:</strong> {fact.location} <br />
-                                <strong>Category:</strong> {fact.category}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
         </div>
     );
 }

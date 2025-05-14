@@ -83,7 +83,7 @@ function SubmitPage() {
                         onChange={(e) => setAnswer(e.target.value)}
                     />
 
-                    <label>Select the location (city or town):</label>
+                    <label>Select the location:</label>
                     <select value={location} onChange={(e) => setLocation(e.target.value)}>
                         <option value="">{"<please select a location>"}</option>
                         <option value="Markham">Markham</option>
@@ -97,7 +97,7 @@ function SubmitPage() {
                         <option value="King">King</option>
                     </select>
 
-                    <label>Category</label>
+                    <label>Category:</label>
                     <select value={category} onChange={(e) => setCategory(e.target.value)}>
                         <option value="">{"<please select a category>"}</option>
                         <option value="Historic">Historic</option>

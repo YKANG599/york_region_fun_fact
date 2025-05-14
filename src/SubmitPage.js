@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SubmitPage.css';
 import axios from 'axios';
 
@@ -7,12 +7,31 @@ function SubmitPage() {
     const [answer, setAnswer] = useState('');
     const [location, setLocation] = useState('');
     const [category, setCategory] = useState('');
+    const [facts, setFacts] = useState([]);
+
     const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+    const fetchFacts = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/facts`);
+            const lines = res.data.trim().split('\n');
+            const rows = lines.slice(1).map(line => {
+                const [question, answer, location, category] = line.split(',');
+                return { question, answer, location, category };
+            });
+            setFacts(rows);
+        } catch (error) {
+            console.error("Failed to load facts:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchFacts();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Field validation
         if (!question.trim() || !answer.trim() || !location || !category) {
             alert("Please fill in all fields before submitting.");
             return;
@@ -31,6 +50,7 @@ function SubmitPage() {
             setAnswer('');
             setLocation('');
             setCategory('');
+            fetchFacts(); // refresh list after submit
         } catch (error) {
             if (error.response && error.response.status === 409) {
                 alert("⚠️ Your question is too similar to an existing one:\n" + error.response.data);
@@ -85,9 +105,8 @@ function SubmitPage() {
                         <option value="Cultural">Cultural</option>
                         <option value="Demographic">Demographic</option>
                         <option value="Economic">Economic</option>
-                        <option value="Other">Other</option> {/* ✅ Newly added */}
+                        <option value="Other">Other</option>
                     </select>
-
 
                     <button type="submit">Submit</button>
                 </form>
@@ -107,8 +126,26 @@ function SubmitPage() {
                 <p><strong>Category:</strong> Physiographic</p>
             </div>
 
+            <div className="fact-list" style={{ marginTop: '40px' }}>
+                <h3>📚 Submitted Facts</h3>
+                {facts.length === 0 ? (
+                    <p>No facts submitted yet.</p>
+                ) : (
+                    <ul>
+                        {facts.map((fact, index) => (
+                            <li key={index} style={{ marginBottom: '15px' }}>
+                                <strong>Q:</strong> {fact.question} <br />
+                                <strong>A:</strong> {fact.answer} <br />
+                                <strong>Location:</strong> {fact.location} <br />
+                                <strong>Category:</strong> {fact.category}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 }
 
 export default SubmitPage;
+

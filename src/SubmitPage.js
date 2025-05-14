@@ -7,6 +7,7 @@ function SubmitPage() {
     const [answer, setAnswer] = useState('');
     const [location, setLocation] = useState('');
     const [category, setCategory] = useState('');
+    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,7 +19,7 @@ function SubmitPage() {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/submit', {
+            const response = await axios.post(`${API_URL}/submit`, {
                 question,
                 answer,
                 location,

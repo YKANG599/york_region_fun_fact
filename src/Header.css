@@ -27,7 +27,6 @@
     color: orange;
 }
 
-/* ✅ Responsive style for screens < 587px */
 @media (max-width: 587px) {
     .header {
         padding: 10px 20px;

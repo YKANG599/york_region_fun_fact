@@ -8,6 +8,8 @@ function GamePage() {
     const [facts, setFacts] = useState([]);
     const [currentFact, setCurrentFact] = useState(null);
     const [userGuess, setUserGuess] = useState(null);
+    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 
     // Load GeoJSON map
     useEffect(() => {
@@ -41,7 +43,7 @@ function GamePage() {
 
     // Load facts from backend
     useEffect(() => {
-        fetch('http://localhost:5000/facts')
+        fetch(`${API_URL}/facts`)
             .then((res) => res.text())
             .then((csv) => {
                 const lines = csv.trim().split('\n');
@@ -54,6 +56,7 @@ function GamePage() {
                 setCurrentFact(data[Math.floor(Math.random() * data.length)]);
             });
     }, []);
+
 
     // Handle map click
     const onEachMunicipality = (feature, layer) => {

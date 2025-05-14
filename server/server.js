@@ -6,7 +6,7 @@ const { createObjectCsvWriter } = require('csv-writer');
 const stringSimilarity = require('string-similarity');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -29,7 +29,6 @@ const csvWriter = createObjectCsvWriter({
 app.post('/submit', async (req, res) => {
     const newFact = req.body;
 
-    // Check for missing fields
     if (!newFact.question || !newFact.answer || !newFact.location || !newFact.category) {
         return res.status(400).send('Missing required fields');
     }
@@ -45,19 +44,15 @@ app.post('/submit', async (req, res) => {
         // File might not exist yet; ignore
     }
 
-    // Check similarity against existing questions
+    // Check similarity
     const threshold = 0.50;
     const matchResult = stringSimilarity.findBestMatch(newFact.question, existingQuestions);
-    console.log(`\nChecking similarity for: "${newFact.question}"`);
-    console.log(`Best match: "${matchResult.bestMatch.target}"`);
-    console.log(`Similarity score: ${matchResult.bestMatch.rating}`);
-
 
     if (matchResult.bestMatch.rating > threshold) {
         return res.status(409).send(`"${matchResult.bestMatch.target}" is too similar to your question.`);
     }
 
-    // Append new fact to CSV
+    // Append new fact
     try {
         await csvWriter.writeRecords([newFact]);
         res.send('Fact saved');
@@ -73,6 +68,34 @@ app.get('/facts', (req, res) => {
         if (err) return res.status(500).send('Failed to read file');
         res.send(data);
     });
+});
+
+// ✅ New: DELETE endpoint to remove a fact by question
+app.delete('/delete', (req, res) => {
+    const { question } = req.body;
+
+    if (!question) {
+        return res.status(400).send('Missing question to delete.');
+    }
+
+    try {
+        const fileData = fs.readFileSync(csvPath, 'utf8').trim().split('\n');
+        const headers = fileData[0];
+        const filtered = fileData.filter((line, i) => {
+            if (i === 0) return true; // keep header
+            return !line.startsWith(question + ',');
+        });
+
+        if (filtered.length === fileData.length) {
+            return res.status(404).send('Question not found.');
+        }
+
+        fs.writeFileSync(csvPath, filtered.join('\n') + '\n');
+        res.send('Fact deleted.');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to delete.');
+    }
 });
 
 app.listen(PORT, () => {

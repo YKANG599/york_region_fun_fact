@@ -7,7 +7,7 @@ function Header() {
         <header className="header">
             <h1>York Region Fun Facts</h1>
             <div className="nav-links">
-                <Link to="/submit">Submit a Fun Fact</Link>
+                <Link to="/submit">Share Fun Facts</Link>
                 <Link to="/play">Play Game</Link>
             </div>
         </header>

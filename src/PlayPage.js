@@ -5,10 +5,9 @@ import 'leaflet/dist/leaflet.css';
 function GamePage() {
     const [geoData, setGeoData] = useState(null);
     const [facts, setFacts] = useState([]);
-    const [currentFact, setCurrentFact] = useState(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [userGuess, setUserGuess] = useState(null);
     const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
 
     // Load GeoJSON map
     useEffect(() => {
@@ -39,7 +38,6 @@ function GamePage() {
             });
     }, []);
 
-
     // Load facts from backend
     useEffect(() => {
         fetch(`${API_URL}/facts`)
@@ -52,10 +50,8 @@ function GamePage() {
                     return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
                 });
                 setFacts(data);
-                setCurrentFact(data[Math.floor(Math.random() * data.length)]);
             });
     }, []);
-
 
     // Handle map click
     const onEachMunicipality = (feature, layer) => {
@@ -68,36 +64,39 @@ function GamePage() {
         layer.bindTooltip(name, { sticky: true });
     };
 
-    // Pick next question
+    // Move to next fact in sequence
     const handleNext = () => {
-        const next = facts[Math.floor(Math.random() * facts.length)];
-        setCurrentFact(next);
         setUserGuess(null);
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % facts.length); // loop back to start
     };
 
     return (
         <div style={{ padding: '20px' }}>
+            <style>
+                {`.leaflet-interactive:focus { outline: none; }`}
+            </style>
+
             <h2 style={{ textAlign: 'center' }}>🗺️ Guess the Municipality</h2>
 
             {/* Question + Feedback ABOVE the map */}
-            {currentFact && (
+            {facts.length > 0 && (
                 <div style={{ marginBottom: '20px', fontSize: '1.1em' }}>
                     <h3>❓ Question</h3>
-                    <p>{currentFact.Question}</p>
+                    <p>{facts[currentIndex].Question}</p>
 
                     {userGuess && (
                         <div>
                             <p>
                                 You guessed: <strong>{userGuess}</strong><br />
-                                {userGuess === currentFact.Location ? (
+                                {userGuess === facts[currentIndex].Location ? (
                                     <span style={{ color: 'green' }}>✅ Correct!</span>
                                 ) : (
                                     <span style={{ color: 'red' }}>
-                                        ❌ Incorrect. The correct answer is <strong>{currentFact.Location}</strong>
+                                        ❌ Incorrect. The correct answer is <strong>{facts[currentIndex].Location}</strong>
                                     </span>
                                 )}
                             </p>
-                            <p><strong>Explanation:</strong> {currentFact.Answer}</p>
+                            <p><strong>Explanation:</strong> {facts[currentIndex].Answer}</p>
                             <button onClick={handleNext} style={{ marginTop: '10px' }}>
                                 Next Question
                             </button>

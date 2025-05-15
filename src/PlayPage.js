@@ -45,11 +45,15 @@ function GamePage() {
             .then((csv) => {
                 const lines = csv.trim().split('\n');
                 const headers = lines[0].split(',');
-                const data = lines.slice(1).map(line => {
-                    const values = line.split(',');
-                    return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
-                });
+
+                const data = lines
+                    .slice(1)
+                    .map(line => line.split(','))
+                    .filter(values => values[0]?.trim()) // ✅ ignore blank questions
+                    .map(values => Object.fromEntries(headers.map((h, i) => [h, values[i]])));
+
                 setFacts(data);
+                setCurrentFact(data[Math.floor(Math.random() * data.length)]);
             });
     }, []);
 

@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 function GamePage() {
     const [geoData, setGeoData] = useState(null);
     const [facts, setFacts] = useState([]);
+    const [currentFact, setCurrentFact] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [userGuess, setUserGuess] = useState(null);
     const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -49,7 +50,7 @@ function GamePage() {
                 const data = lines
                     .slice(1)
                     .map(line => line.split(','))
-                    .filter(values => values[0]?.trim()) // ✅ ignore blank questions
+                    .filter(values => values[0]?.trim()) //
                     .map(values => Object.fromEntries(headers.map((h, i) => [h, values[i]])));
 
                 setFacts(data);
